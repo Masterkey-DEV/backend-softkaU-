@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsEmail,
+  IsArray,
+  IsOptional,
+  Length,
+} from 'class-validator';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
@@ -8,5 +15,9 @@ export class CreateUserDto {
   email: string;
   @IsString()
   @IsNotEmpty()
+  @Length(8, 20)
   password: string;
+  @IsArray()
+  @IsOptional()
+  bingoCard: (string | number)[];
 }

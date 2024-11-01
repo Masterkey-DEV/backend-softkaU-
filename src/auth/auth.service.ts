@@ -5,7 +5,16 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
-  async login(user: any) {
+  async decode(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token);
+      return decoded;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async sign(user: any) {
     const payload: any = {
       userId: user.userId,
       username: user.userName,
@@ -18,7 +27,13 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
-  async validateUser(payload: any) {
-    return this.jwtService.verify(payload);
+
+  async validateUser(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token);
+      return true;
+    } catch (error) {
+      return null;
+    }
   }
 }

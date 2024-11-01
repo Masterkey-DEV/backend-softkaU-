@@ -13,7 +13,7 @@ export class User {
   @Prop({
     required: true,
     unique: true,
-    match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/, // Expresión regular para validar email
+    match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
   })
   email: string;
 
@@ -22,6 +22,11 @@ export class User {
     minlength: 8,
   })
   password: string;
+
+  @Prop({
+    default: [],
+  })
+  bingoCard: (string | number)[][];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

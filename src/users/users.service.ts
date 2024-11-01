@@ -2,6 +2,7 @@ import {
   HttpException,
   Injectable,
   NotFoundException,
+  ConflictException,
   Req,
   Res,
 } from '@nestjs/common';
@@ -22,6 +23,12 @@ export class UsersService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto) {
+    const { email } = createUserDto;
+
+    const existingUser = await this.userModel.findOne({ email });
+    if (existingUser) {
+      throw new ConflictException('El correo electrónico ya está en uso.');
+    }
     let { password } = createUserDto;
     password = await this.passwordService.hashPassword(password);
     createUserDto.password = password;
@@ -46,7 +53,7 @@ export class UsersService {
       password: user.password,
       email: user.email,
     };
-    const { access_token } = await this.authService.login(userData);
+    const { access_token } = await this.authService.sign(userData);
     res.cookie('access_token', access_token, {
       httpOnly: true,
       secure: true,

@@ -3,4 +3,5 @@ export interface UserInterface {
   userName: string;
   password: string;
   email: string;
+  bingoCard: (string | number)[][];
 }
