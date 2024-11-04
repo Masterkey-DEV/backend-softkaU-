@@ -14,7 +14,7 @@ import { GameService } from './game.service';
 @UseGuards(WsGuard)
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3001',
+    origin: 'http://localhost:3000',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   },
@@ -51,12 +51,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (clientAlreadyConnected) {
       console.log('El cliente ya está conectado');
       await this.rejoinPlayer(client, user);
-      return;
     } else if (this.gameStarted) {
       console.log('La partida ya ha comenzado');
       client.emit('error', 'game started, wait until the game ends');
       client.disconnect();
-      return;
     }
 
     // Agrega nuevo jugador
@@ -124,8 +122,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private updateGameStatus() {
     this.server.emit('current_players', this.playersConnection.size);
-
-    if (this.playersConnection.size < 2 && this.gameStarted) {
+    if (this.playersConnection.size == 1 && this.gameStarted) {
       this.server.emit('victory', 'You won the game');
       this.endGame();
     }
@@ -157,6 +154,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (this.playedNumbers.size === 75 || gameTimeLeft <= 0) {
         this.endGame();
         clearInterval(interval);
+      }
+      if (this.playersConnection.size == 1 && this.gameStarted) {
+        this.server.emit(
+          'victory',
+          'you won the game by default no players left',
+        );
       } else {
         this.server.emit('number_played', randomNumber);
         this.server.emit('game_time_left', gameTimeLeft);
