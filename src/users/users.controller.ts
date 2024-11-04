@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, Req } from '@nestjs/common';
+import { Controller, Post, Body, Res, Req, Get } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,8 +17,8 @@ export class UsersController {
     return await this.usersService.login(loginUserData, res);
   }
 
-  @Post('getTable')
-  async getTable(@Req() req: Request, @Res() res: Response) {
-    return await this.usersService.getTable(req, res);
+  @Get('getUser')
+  async getUser(@Req() req: Request, @Res() res: Response) {
+    return await this.usersService.allowedUser(req, res);
   }
 }

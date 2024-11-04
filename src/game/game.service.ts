@@ -17,12 +17,25 @@ export class GameService {
     const userPlayer = await this.userModel.findById(user.userId);
     return userPlayer.bingoCard;
   }
+  async getCurrentBingoCard(user: UserInterface) {
+    const userPlayer = await this.userModel.findById(user.userId);
+    return userPlayer.bingoCard;
+  }
+
+  deleteAllBingoCards() {
+    this.userModel.updateMany({}, { bingoCard: [] });
+  }
+
   async addBingoCard(user: UserInterface) {
-    const newBingoCard = this.generateBingoCard();
+    const newBingoCard = await this.generateBingoCard();
     user.bingoCard = newBingoCard;
-    const userPlayer = await this.userModel.findByIdAndUpdate(user.userId, {
-      bingoCard: newBingoCard,
-    });
+    const userPlayer = await this.userModel.findByIdAndUpdate(
+      user.userId,
+      {
+        bingoCard: newBingoCard,
+      },
+      { new: true },
+    );
     return userPlayer;
   }
   async removeBingoCard(user: UserInterface) {

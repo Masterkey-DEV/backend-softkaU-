@@ -1,6 +1,6 @@
 export interface UserInterface {
   userId: string;
-  userName: string;
+  name: string;
   password: string;
   email: string;
   bingoCard: (string | number)[][];
