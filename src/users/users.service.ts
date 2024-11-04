@@ -43,9 +43,12 @@ export class UsersService {
   }
 
   async login(loginUserDto: LoginUserDto, @Res() res: Response) {
-    const user = await this.userModel.findOne({ email: loginUserDto.email });
+    const user = await this.userModel.findOne({ name: loginUserDto.name });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
+    }
+    if (user.email != loginUserDto.email) {
+      throw new NotFoundException('correo no encontrado');
     }
     const isPasswordCorrect = await this.authService.comparePassword(
       loginUserDto.password,
