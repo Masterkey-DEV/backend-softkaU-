@@ -1,99 +1,31 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+Proyecto Bingo
+hola mi nombres es Juan Sebastian Moreno tengo 19 años soy desarrollador full stack con enfasis en el backend este es mi proyecto para la prueba tecnica de sofkaU
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Tecnologias
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- para el desarrollo del backend escogi nest js como framework debido a que es un framework que te obliga a usar buenas praticas y escribir tu codigo de forma modular con la arquitectura mvc
+- use mongoDB como db porque no habia necesidad de utilizar una db relacional bajo mi parecer
+- use websockets para comunicar a los jugadores
 
-## Description
+# Descripción
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- el backend del juego fue hecho utilizando nest.js y websockets y una db en mongodb
+- registro y login de usuarios
+- encriptacion de datos
+- cuenta con autenticacion atraves de cookies y webtokens
+- guards para controlar el acceso a los websockets
+- logica de juego para generar la targeta de bingo y verificar si el usuario gano
+- avisos de error y notificaciones a través de websockets
 
-## Project setup
+## funciionamiento
 
-```bash
-$ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- el frontend se conecta a la api de nest.js y se envía el token de autenticación en caso de tener una cuenta ya registrada esto se hace atraves de la ruta /api/auth/login para login y /api/auth/register para registrarse
+- cuando el usuario se autentica, se le asigna un token de autenticación
+- una vez autenticado, el usuario puede entrar jugar al bingo a través de websockets atraves de la ruta /api y el token de autenticación se envia en la cabecera de la petición en las cookies
+- si ya hay una partida en curso, el usuario sera notificado y desconectado
+- de no haber una partida en curso, se agrega el jugador a los jgadores conectados y en espera ademas se le genera una targeta de bingo para esta partida
+- se espera 30 segundos a la conexion de mas jugadores para comenzar la partida si solo se conecta un jugador, el temporizador no da inicio, si se conecta mas de un jugador pero al comenzar la partida solo hay uno o menos se le notifica que la partida no puede coenzar por falta de jugadores se desconecta y reinicia
+- si durante la partida el usuario juega bingo y no gana el juego, se le notifica y se desconecta
+- si el usuario gana, se le notifica a el de su victoria y a el resto de jugaores de su derrota y se desconectan
+- si durante la partida no hay jugadores suficientes para tener un juego en condiciones (que sea mas de un jugador) el ultimo jugador gana automaticamente la partida por defecto
+- si el juego termina por el tiemo limite de juego (en este caso el justo para que s ejueguen todos los numeros posibles) se le notifica a los jugadores del empate y se desconectan

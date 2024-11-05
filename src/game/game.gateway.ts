@@ -31,6 +31,10 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private gameStarted = false;
   private timeStarted = false;
 
+  // Variables privadas para almacenar los intervalos
+  private preGameTimerInterval: NodeJS.Timeout | null = null;
+  private gameInterval: NodeJS.Timeout | null = null;
+
   constructor(
     private readonly gameService: GameService,
     @Inject(WsGuard) private readonly wsGuard: WsGuard,
@@ -43,7 +47,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
 
-    // Evita contar conexiones duplicadas
     const clientAlreadyConnected = Array.from(this.playersActive).some(
       (connectedClient) => connectedClient.userId === user.userId,
     );
@@ -57,7 +60,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.disconnect();
     }
 
-    // Agrega nuevo jugador
     this.playersConnection.add(client);
     this.playerNumber++;
     this.waitPlayers++;
@@ -74,7 +76,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
     }
 
-    // Genera y envía la tarjeta de bingo
     const userPlayer = await this.gameService.addBingoCard(user);
     client.emit('game_card', userPlayer.bingoCard);
     console.log('Tarjeta de bingo generada');
@@ -122,7 +123,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private updateGameStatus() {
     this.server.emit('current_players', this.playersConnection.size);
-    if (this.playersConnection.size == 1 && this.gameStarted) {
+    if (this.playersConnection.size === 1 && this.gameStarted) {
       this.server.emit('victory', 'You won the game');
       this.endGame();
     }
@@ -130,12 +131,15 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private startGameTimer() {
     let timeLeft = 30;
-    const interval = setInterval(() => {
+    this.preGameTimerInterval = setInterval(() => {
       this.server.emit('pre_game_timer', timeLeft);
       timeLeft--;
 
       if (timeLeft <= 0) {
-        clearInterval(interval);
+        if (this.preGameTimerInterval) {
+          clearInterval(this.preGameTimerInterval);
+          this.preGameTimerInterval = null;
+        }
         this.waitPlayers > 1 ? this.emitGameStart() : this.cancelGame();
       }
     }, 1000);
@@ -146,16 +150,19 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.gameStarted = true;
     let gameTimeLeft = 230;
 
-    const interval = setInterval(() => {
+    this.gameInterval = setInterval(() => {
       gameTimeLeft -= 3;
       const randomNumber = this.generateUniqueRandomNumber();
       this.playedNumbers.add(randomNumber);
 
       if (this.playedNumbers.size === 75 || gameTimeLeft <= 0) {
         this.endGame();
-        clearInterval(interval);
+        if (this.gameInterval) {
+          clearInterval(this.gameInterval);
+          this.gameInterval = null;
+        }
       }
-      if (this.playersConnection.size == 1 && this.gameStarted) {
+      if (this.playersConnection.size === 1 && this.gameStarted) {
         this.server.emit(
           'victory',
           'you won the game by default no players left',
@@ -197,6 +204,16 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.timeStarted = false;
     this.playerNumber = 0;
     this.waitPlayers = 0;
+
+    // Limpiar los intervalos si existen
+    if (this.preGameTimerInterval) {
+      clearInterval(this.preGameTimerInterval);
+      this.preGameTimerInterval = null;
+    }
+    if (this.gameInterval) {
+      clearInterval(this.gameInterval);
+      this.gameInterval = null;
+    }
   }
 
   async handleDisconnect(client: Socket) {
