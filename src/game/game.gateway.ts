@@ -31,7 +31,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private gameStarted = false;
   private timeStarted = false;
 
-  // Variables privadas para almacenar los intervalos
+  // Variables para controlar intervalos
   private preGameTimerInterval: NodeJS.Timeout | null = null;
   private gameInterval: NodeJS.Timeout | null = null;
 
@@ -54,18 +54,23 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (clientAlreadyConnected) {
       console.log('El cliente ya está conectado');
       await this.rejoinPlayer(client, user);
-    } else if (this.gameStarted) {
+      return;
+    }
+    if (this.gameStarted) {
       console.log('La partida ya ha comenzado');
       client.emit('error', 'game started, wait until the game ends');
       client.disconnect();
+      return;
     }
 
+    // Añadir jugador nuevo
     this.playersConnection.add(client);
     this.playerNumber++;
     this.waitPlayers++;
     this.playersActive.add(user);
     this.updateGameStatus();
 
+    // Iniciar temporizador de inicio de partida
     if (this.waitPlayers > 1 && !this.gameStarted && !this.timeStarted) {
       this.timeStarted = true;
       this.startGameTimer();
@@ -76,6 +81,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
     }
 
+    // Enviar tarjeta de bingo al cliente
     const userPlayer = await this.gameService.addBingoCard(user);
     client.emit('game_card', userPlayer.bingoCard);
     console.log('Tarjeta de bingo generada');
@@ -92,17 +98,18 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const playerBingoCard = await this.gameService.getCurrentBingoCard(user);
     if (this.gameService.checkWin(playerBingoCard, this.playedNumbers)) {
       client.emit('victory', 'Congratulations, you have won!');
-      this.server.emit('lose', 'Sorry, you lost.');
+      client.disconnect();
+      this.server.emit('lose', `has perdido ${user.name} ah ganado`);
       this.endGame();
     } else {
       client.emit('lose', 'Sorry, you did not win. Disconnecting...');
-      client.disconnect();
       this.disconnectPlayer(client);
     }
   }
 
   private async rejoinPlayer(client: Socket, user: UserInterface) {
     this.playersConnection.add(client);
+    this.waitPlayers++;
     const currentBingoCard = await this.gameService.getCurrentBingoCard(user);
     client.emit('game_card', currentBingoCard);
     this.updateGameStatus();
@@ -123,7 +130,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private updateGameStatus() {
     this.server.emit('current_players', this.playersConnection.size);
-    if (this.playersConnection.size === 1 && this.gameStarted) {
+    if (this.waitPlayers <= 1 && this.gameStarted) {
       this.server.emit('victory', 'You won the game');
       this.endGame();
     }
@@ -157,16 +164,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       if (this.playedNumbers.size === 75 || gameTimeLeft <= 0) {
         this.endGame();
-        if (this.gameInterval) {
-          clearInterval(this.gameInterval);
-          this.gameInterval = null;
-        }
-      }
-      if (this.playersConnection.size === 1 && this.gameStarted) {
+      } else if (this.playersConnection.size === 1 && this.gameStarted) {
         this.server.emit(
           'victory',
           'you won the game by default no players left',
         );
+        this.endGame();
       } else {
         this.server.emit('number_played', randomNumber);
         this.server.emit('game_time_left', gameTimeLeft);
@@ -205,7 +208,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.playerNumber = 0;
     this.waitPlayers = 0;
 
-    // Limpiar los intervalos si existen
     if (this.preGameTimerInterval) {
       clearInterval(this.preGameTimerInterval);
       this.preGameTimerInterval = null;
@@ -219,6 +221,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(client: Socket) {
     if (this.playersConnection.has(client)) {
       this.disconnectPlayer(client);
+      this.waitPlayers--;
     }
   }
 

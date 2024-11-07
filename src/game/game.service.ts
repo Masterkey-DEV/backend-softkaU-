@@ -72,7 +72,6 @@ export class GameService {
       [columnB[4], columnI[4], columnN[4], columnG[4], columnO[4]],
     ];
   }
-
   checkWin(
     bingoCard: (number | string)[][],
     numbersPlayed: Set<number>,

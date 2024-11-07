@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { winningCombinations } from 'src/auth/environment/const';
+
 @Injectable()
 export class GameService {
   generateRandomNumbers = (min: number, max: number, count: number) => {
@@ -15,7 +15,7 @@ export class GameService {
     // Generar 5 números para cada columna respetando el rango de cada letra en Bingo
     const columnB: number[] = this.generateRandomNumbers(1, 15, 5);
     const columnI: number[] = this.generateRandomNumbers(16, 30, 5);
-    const columnN: (number | string)[] = this.generateRandomNumbers(31, 45, 4); // Uno menos para el espacio libre
+    const columnN: (number | string)[] = this.generateRandomNumbers(31, 45, 4);
     const columnG: number[] = this.generateRandomNumbers(46, 60, 5);
     const columnO: number[] = this.generateRandomNumbers(61, 75, 5);
 
@@ -30,16 +30,5 @@ export class GameService {
       [columnB[3], columnI[3], columnN[3], columnG[3], columnO[3]],
       [columnB[4], columnI[4], columnN[4], columnG[4], columnO[4]],
     ];
-  }
-  // obengo el array especifico del usuario los numeros que tiene marcados y los que se jugaron
-  youWin(
-    arr: (number | string)[],
-    userNumbers: number[],
-    numbersPlayed: (number | string)[],
-  ): boolean {
-    console.log(arr);
-    console.log(userNumbers);
-    console.log(numbersPlayed);
-    return true;
   }
 }
